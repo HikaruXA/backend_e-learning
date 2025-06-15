@@ -76,19 +76,30 @@ const loginUser = (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // Create JWT token
     const token = jwt.sign({ id: user.id, role: user.role }, secretKey, {
       expiresIn: "1h",
     });
 
     delete user.password;
 
+    // Set JWT in HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Set to true in production
+      sameSite: "Strict",
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
     return res.json({
       message: "Login successful",
       user,
-      token,
     });
   });
+};
+
+const logoutUser = (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Logged out successfully" });
 };
 
 const deactivateUser = (req, res) => {
@@ -202,6 +213,7 @@ const showAllTeacherUsers = (req, res) => {
 module.exports = {
   createUser,
   loginUser,
+  logoutUser,
   deactivateUser,
   showActiveUsers,
   showDeactivatedUsers,

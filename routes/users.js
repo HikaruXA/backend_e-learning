@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   createUser,
   loginUser,
+  logoutUser,
   deactivateUser,
   showActiveUsers,
   showDeactivatedUsers,
@@ -14,6 +15,7 @@ const {
 // Users Route
 router.post("/create", createUser);
 router.post("/login", loginUser);
+router.post("/logout", logoutUser);
 router.patch("/:id/deactivate", deactivateUser);
 router.get("/active", showActiveUsers);
 router.get("/inactive", showDeactivatedUsers);
