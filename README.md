@@ -4,7 +4,7 @@
   <h1>E-Learning Backend API</h1>
 
   <p style="color: #d9534f; font-weight: bold;">
-    ⚠️ <em>Backend is currently a Work In Progress (WIP). Features and APIs are actively being developed and may change.</em>
+    ⚠️ <em>The backend is currently a work in progress. Features and APIs are currently being developed and may change.</em>
   </p>
 
   <h2>Project Overview</h2>
