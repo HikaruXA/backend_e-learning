@@ -18,7 +18,7 @@
   </p>
   <ul>
     <li>User management (Students, Teachers, Admins)</li>
-    <li>Course and lesson creation and management</li>
+    <li>Creation and management of lesson content linked to specific <strong>grade levels</strong> and <strong>quarters (1st to 4th)</strong>, contributed by both <strong>Teachers and Students</strong> to foster knowledge sharing</li>
     <li>Enrollment and progress tracking</li>
     <li>Grade levels and subjects organization</li>
     <li>Authentication and authorization using JWT</li>
@@ -31,13 +31,9 @@
   <h2>Features</h2>
   <ul>
     <li><strong>Role-based access control</strong> for Admin, Teacher, and Student users</li>
-    <li>CRUD operations for courses, lessons, subjects, and grade levels</li>
     <li>User registration and login with secure password hashing</li>
     <li>JWT-based authentication middleware to protect routes</li>
-    <li>Management of lesson content and multimedia attachments</li>
-    <li>Tracking student progress and grades per lesson and subject</li>
-    <li>Timezone-aware timestamps and record keeping</li>
-    <li>Pagination, filtering, and sorting for efficient data retrieval</li>
+    <li>Management of lesson content and multimedia attachments, linked to grade level and quarter, created by both Teachers and Students</li>
     <li>Error handling and input validation</li>
   </ul>
 
