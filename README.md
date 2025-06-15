@@ -41,7 +41,7 @@
   <ul>
     <li><strong>Node.js</strong> runtime environment</li>
     <li><strong>Express.js</strong> web framework</li>
-    <li><strong>MySQL</strong> relational database using the native <code>mysql2</code> or <code>mysql</code> Node.js driver (no ORM)</li>
+    <li><strong>MySQL</strong> relational database using the native <code>mysql</code> Node.js driver (no ORM)</li>
     <li><strong>bcrypt</strong> for password hashing</li>
     <li><strong>jsonwebtoken (JWT)</strong> for authentication</li>
     <li>Middleware for request validation and security (CORS, Helmet, rate limiting, etc.)</li>
