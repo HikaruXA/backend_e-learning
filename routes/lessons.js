@@ -3,6 +3,7 @@ const router = express.Router();
 
 const authenticateToken = require("../middlewares/authMiddleware");
 const timezoneMiddleware = require("../middlewares/timezone");
+const authorizeRole = require("../middlewares/roleMiddleware");
 
 const {
   createLesson,
@@ -13,6 +14,7 @@ const {
 
 // Middleware
 router.use(authenticateToken);
+router.use(authorizeRole("admin"));
 
 // Lesson Routes
 router.post("/create", createLesson);

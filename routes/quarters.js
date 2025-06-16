@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const authenticateToken = require("../middlewares/authMiddleware");
+const authorizeRole = require("../middlewares/roleMiddleware");
 
 const {
   createQuarter,
@@ -7,6 +9,9 @@ const {
   updateQuarter,
   deleteQuarter,
 } = require("../controllers/quarterController");
+
+router.use(authenticateToken);
+router.use(authorizeRole("admin"));
 
 // Quarters Route
 router.post("/create", createQuarter);
