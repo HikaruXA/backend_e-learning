@@ -102,6 +102,19 @@ const logoutUser = (req, res) => {
   res.json({ message: "Logged out successfully" });
 };
 
+const getCurrentUser = (req, res) => {
+  const user = req.user; // Set in auth middleware
+
+  if (!user) {
+    return res.status(401).json({ error: "User not authenticated" });
+  }
+
+  return res.json({
+    message: "Authenticated user retrieved successfully",
+    user,
+  });
+};
+
 const deactivateUser = (req, res) => {
   const userId = req.params.id;
 
@@ -214,6 +227,7 @@ module.exports = {
   createUser,
   loginUser,
   logoutUser,
+  getCurrentUser,
   deactivateUser,
   showActiveUsers,
   showDeactivatedUsers,
