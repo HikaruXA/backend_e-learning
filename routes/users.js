@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authenticateToken = require("../middlewares/authMiddleware");
+const { loginLimiter } = require("../middlewares/rateLimiter");
 
 const {
   createUser,
@@ -16,7 +17,7 @@ const {
 
 // Users Route
 router.post("/create", createUser);
-router.post("/login", loginUser);
+router.post("/login", loginLimiter, loginUser);
 router.post("/logout", logoutUser);
 router.get("/me", authenticateToken, getCurrentUser);
 router.patch("/:id/deactivate", deactivateUser);
