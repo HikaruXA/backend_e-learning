@@ -4,6 +4,7 @@ const router = express.Router();
 const authenticateToken = require("../middlewares/authMiddleware");
 const timezoneMiddleware = require("../middlewares/timezone");
 const authorizeRole = require("../middlewares/roleMiddleware");
+const logApiRequest = require("../middlewares/logMiddleware"); // ✅ Add this line
 
 const {
   createLesson,
@@ -12,9 +13,9 @@ const {
   deactivateLesson,
 } = require("../controllers/lessonController");
 
-// Middleware
+// ✅ Apply middleware
 router.use(authenticateToken);
-router.use(authorizeRole("admin"));
+router.use(logApiRequest); // ✅ Logs after auth + role
 
 // Lesson Routes
 router.post("/create", createLesson);

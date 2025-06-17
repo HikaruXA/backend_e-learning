@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authenticateToken = require("../middlewares/authMiddleware");
 const authorizeRole = require("../middlewares/roleMiddleware");
+const logApiRequest = require("../middlewares/logMiddleware"); // 👈 Import log middleware
 
 const {
   createGradeLevel,
@@ -10,7 +11,9 @@ const {
   deactivateGradeLevel,
 } = require("../controllers/gradelvlController");
 
+// Apply authentication and authorization
 router.use(authenticateToken);
+router.use(logApiRequest);
 router.use(authorizeRole("admin"));
 
 // Grade Level Routes

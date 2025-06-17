@@ -5,19 +5,21 @@ const createQuarter = (req, res) => {
   const { name } = req.body;
 
   if (!name) {
+    res.locals.logMessage = "Quarter name is missing in request";
     return res.status(400).json({ error: "Quarter name is required" });
   }
 
-  const sql = `
-    INSERT INTO quarter (name)
-    VALUES (?)
-  `;
+  const sql = `INSERT INTO quarter (name) VALUES (?)`;
 
   db.query(sql, [name], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while creating quarter: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
+    res.locals.logMessage = "Quarter created successfully";
     return res.status(201).json({
-      message: "Quarter created successfully",
+      message: res.locals.logMessage,
       quarter_id: result.insertId,
     });
   });
@@ -28,14 +30,19 @@ const getAllQuarters = (req, res) => {
   const sql = `SELECT * FROM quarter`;
 
   db.query(sql, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while retrieving quarters: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (!result || result.length === 0) {
+      res.locals.logMessage = "No quarters found in database";
       return res.status(404).json({ error: "No quarters found" });
     }
 
+    res.locals.logMessage = "Quarters retrieved successfully";
     return res.json({
-      message: "Quarters retrieved successfully",
+      message: res.locals.logMessage,
       quarters: result,
     });
   });
@@ -47,23 +54,25 @@ const updateQuarter = (req, res) => {
   const { name } = req.body;
 
   if (!name) {
+    res.locals.logMessage = "Quarter name is missing in update request";
     return res.status(400).json({ error: "Quarter name is required" });
   }
 
-  const sql = `
-    UPDATE quarter
-    SET name = ?
-    WHERE id = ?
-  `;
+  const sql = `UPDATE quarter SET name = ? WHERE id = ?`;
 
   db.query(sql, [name, quarterId], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while updating quarter: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (result.affectedRows === 0) {
+      res.locals.logMessage = `Quarter with ID ${quarterId} not found`;
       return res.status(404).json({ error: "Quarter not found" });
     }
 
-    return res.json({ message: "Quarter updated successfully" });
+    res.locals.logMessage = `Quarter with ID ${quarterId} updated successfully`;
+    return res.json({ message: res.locals.logMessage });
   });
 };
 
@@ -71,19 +80,21 @@ const updateQuarter = (req, res) => {
 const deleteQuarter = (req, res) => {
   const quarterId = req.params.id;
 
-  const sql = `
-    DELETE FROM quarter
-    WHERE id = ?
-  `;
+  const sql = `DELETE FROM quarter WHERE id = ?`;
 
   db.query(sql, [quarterId], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while deleting quarter: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (result.affectedRows === 0) {
+      res.locals.logMessage = `Quarter with ID ${quarterId} not found`;
       return res.status(404).json({ error: "Quarter not found" });
     }
 
-    return res.json({ message: "Quarter deleted successfully" });
+    res.locals.logMessage = `Quarter with ID ${quarterId} deleted successfully`;
+    return res.json({ message: res.locals.logMessage });
   });
 };
 

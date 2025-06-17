@@ -22,6 +22,7 @@ const createLesson = (req, res) => {
     !title ||
     !difficulty
   ) {
+    res.locals.logMessage = "Missing required fields for lesson creation";
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -44,10 +45,14 @@ const createLesson = (req, res) => {
   ];
 
   db.query(sql, values, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while creating lesson: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
+    res.locals.logMessage = "Lesson created successfully";
     return res.status(201).json({
-      message: "Lesson created successfully",
+      message: res.locals.logMessage,
       lesson_id: result.insertId,
     });
   });
@@ -55,7 +60,7 @@ const createLesson = (req, res) => {
 
 // Get all active lessons
 const getAllLessons = (req, res) => {
-  const userTimezone = req.timezone; // now comes from middleware
+  const userTimezone = req.timezone;
 
   const sql = `
     SELECT l.*, 
@@ -72,12 +77,21 @@ const getAllLessons = (req, res) => {
   `;
 
   db.query(sql, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while retrieving lessons: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (!result || result.length === 0) {
+      res.locals.logMessage = "No lessons found";
+      return res.status(404).json({ error: "No lessons found" });
+    }
 
     const lessons = convertTimestamps(result, userTimezone);
+    res.locals.logMessage = "Lessons retrieved successfully";
 
     return res.json({
-      message: "Lessons retrieved successfully",
+      message: res.locals.logMessage,
       lessons,
     });
   });
@@ -117,13 +131,18 @@ const updateLesson = (req, res) => {
   ];
 
   db.query(sql, values, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while updating lesson: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (result.affectedRows === 0) {
+      res.locals.logMessage = `Lesson with ID ${lessonId} not found`;
       return res.status(404).json({ error: "Lesson not found" });
     }
 
-    return res.json({ message: "Lesson updated successfully" });
+    res.locals.logMessage = `Lesson with ID ${lessonId} updated successfully`;
+    return res.json({ message: res.locals.logMessage });
   });
 };
 
@@ -134,13 +153,18 @@ const deactivateLesson = (req, res) => {
   const sql = `UPDATE lesson SET is_active = 0 WHERE id = ?`;
 
   db.query(sql, [lessonId], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while deactivating lesson: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (result.affectedRows === 0) {
+      res.locals.logMessage = `Lesson with ID ${lessonId} not found`;
       return res.status(404).json({ error: "Lesson not found" });
     }
 
-    return res.json({ message: "Lesson deactivated successfully" });
+    res.locals.logMessage = `Lesson with ID ${lessonId} deactivated successfully`;
+    return res.json({ message: res.locals.logMessage });
   });
 };
 

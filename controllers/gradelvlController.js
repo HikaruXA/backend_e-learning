@@ -5,6 +5,7 @@ const createGradeLevel = (req, res) => {
   const { level, description } = req.body;
 
   if (!level) {
+    res.locals.logMessage = "Grade level creation failed: 'level' is required";
     return res.status(400).json({ error: "Grade level name is required" });
   }
 
@@ -14,10 +15,14 @@ const createGradeLevel = (req, res) => {
   `;
 
   db.query(sql, [level, description], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while creating grade level: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
+    res.locals.logMessage = "Grade level created successfully";
     return res.status(201).json({
-      message: "Grade level created successfully",
+      message: res.locals.logMessage,
       grade_level_id: result.insertId,
     });
   });
@@ -28,14 +33,19 @@ const getActiveGradeLevels = (req, res) => {
   const sql = `SELECT * FROM grade_level WHERE is_active = 1`;
 
   db.query(sql, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while fetching grade levels: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (!result || result.length === 0) {
+      res.locals.logMessage = "No active grade levels found";
       return res.status(404).json({ error: "No active grade levels found" });
     }
 
+    res.locals.logMessage = "Active grade levels retrieved successfully";
     return res.json({
-      message: "Active grade levels retrieved successfully",
+      message: res.locals.logMessage,
       grade_levels: result,
     });
   });
@@ -47,6 +57,7 @@ const updateGradeLevel = (req, res) => {
   const { level, description } = req.body;
 
   if (!level) {
+    res.locals.logMessage = "Grade level update failed: 'level' is required";
     return res.status(400).json({ error: "Grade level name is required" });
   }
 
@@ -57,13 +68,18 @@ const updateGradeLevel = (req, res) => {
   `;
 
   db.query(sql, [level, description, gradeLevelId], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while updating grade level: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (result.affectedRows === 0) {
+      res.locals.logMessage = `Grade level with ID ${gradeLevelId} not found`;
       return res.status(404).json({ error: "Grade level not found" });
     }
 
-    return res.json({ message: "Grade level updated successfully" });
+    res.locals.logMessage = `Grade level with ID ${gradeLevelId} updated successfully`;
+    return res.json({ message: res.locals.logMessage });
   });
 };
 
@@ -78,13 +94,18 @@ const deactivateGradeLevel = (req, res) => {
   `;
 
   db.query(sql, [gradeLevelId], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      res.locals.logMessage = `Database error while deactivating grade level: ${err.message}`;
+      return res.status(500).json({ error: err.message });
+    }
 
     if (result.affectedRows === 0) {
+      res.locals.logMessage = `Grade level with ID ${gradeLevelId} not found`;
       return res.status(404).json({ error: "Grade level not found" });
     }
 
-    return res.json({ message: "Grade level deactivated successfully" });
+    res.locals.logMessage = `Grade level with ID ${gradeLevelId} deactivated successfully`;
+    return res.json({ message: res.locals.logMessage });
   });
 };
 
